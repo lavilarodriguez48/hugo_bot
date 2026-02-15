@@ -27,16 +27,14 @@ avatar_html = """
 </script>
 
 <div style="width: 100%; height: 500px;">
-    <model-viewer src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
-                  alt="Hugo"
-                  auto-rotate
-                  rotation-per-second="30deg"
-                  camera-controls
-                  shadow-intensity="1"
-                  exposure="1.2"
-                  environment-image="neutral"
-                  style="width: 100%; height: 100%;">
-    </model-viewer>
+<model-viewer
+    src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
+    alt="Hugo"
+    auto-rotate
+    camera-controls
+    style="width: 100%; height: 500px;"
+    orientation="0deg 90deg 0deg">
+</model-viewer>
 </div>
 """
 
