@@ -22,19 +22,22 @@ st.write("Habla con Hugo, tu asistente que clasifica preguntas usando tu modelo 
 # Avatar 3D
 # -----------------------------
 avatar_html = """
+<script type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
 <div style="width: 100%; height: 500px;">
     <model-viewer src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
                   alt="Hugo"
                   auto-rotate
+                  rotation-per-second="30deg"
                   camera-controls
                   shadow-intensity="1"
+                  exposure="1.2"
+                  environment-image="neutral"
                   style="width: 100%; height: 100%;">
     </model-viewer>
 </div>
-
-<script type="module"
-        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-</script>
 """
 
 st.components.v1.html(avatar_html, height=500)
