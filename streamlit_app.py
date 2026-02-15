@@ -6,7 +6,7 @@ import spacy
 # -----------------------------
 @st.cache_resource
 def load_model():
-    return spacy.load("model/modelo_lauri/model-last")
+    return spacy.load("model/modelo_hugo/model-last")
 
 nlp = load_model()
 
