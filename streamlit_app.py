@@ -27,7 +27,7 @@ avatar_html = """
 </script>
 
 <div style="width: 100%; height: 500px;">
-    <model-viewer src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
+    <model-viewer src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/principal/activos/hugo.glb"
                   alt="Hugo"
                   auto-rotate
                   rotation-per-second="30deg"
