@@ -1,0 +1,12 @@
+{
+  "labels":[
+    "QUESTION",
+    "OPTION_CORRECT",
+    "OPTION_WRONG",
+    "TRUE_FALSE",
+    "MULTI_CORRECT",
+    "OTHER"
+  ],
+  "threshold":0.0,
+  "positive_label":null
+}
