@@ -1,5 +1,13 @@
 import streamlit as st
 import spacy
+import openai  
+from procesar_word import extraer_preguntas  
+from generar_xml import generar_xml  
+
+# -----------------------------
+# Configurar clave OpenAI
+# -----------------------------
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # -----------------------------
 # Cargar modelo spaCy
@@ -11,12 +19,34 @@ def load_model():
 nlp = load_model()
 
 # -----------------------------
+# Función de chat con Hugo
+# -----------------------------
+def responder_como_asistente(texto):
+    respuesta = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Eres Hugo, un asistente amable que ayuda a Laura a generar preguntas tipo test y XML para Moodle."},
+            {"role": "user", "content": texto}
+        ]
+    )
+    return respuesta.choices[0].message["content"]
+
+# -----------------------------
 # Configuración de la página
 # -----------------------------
-st.set_page_config(page_title="Hugo 3D", layout="wide")
+st.set_page_config(
+    page_title="Hugo — Asistente 3D",
+    page_icon="👨‍🦱",
+    layout="wide"
+)
 
-st.title("👦 Hugo — Tu asistente 3D inteligente")
-st.write("Habla con Hugo, tu asistente que clasifica preguntas usando tu modelo spaCy.")
+# -----------------------------
+# Encabezado bonito
+# -----------------------------
+st.markdown("""
+# 👨‍🦱 Hugo — Tu asistente 3D inteligente  
+### Habla con Hugo, sube Word o genera XML para Moodle  
+""")
 
 # -----------------------------
 # Avatar 3D
@@ -35,21 +65,120 @@ avatar_html = """
     style="width: 100%; height: 500px;"
     orientation="0deg 90deg 0deg">
 </model-viewer>
+
 </div>
 """
 
 st.components.v1.html(avatar_html, height=500)
 
 # -----------------------------
-# Clasificación con spaCy
+# Script para animación + voz
 # -----------------------------
-texto = st.text_area("Escribe una pregunta o una opción:")
+reactive_animation_and_voice = """
+<script>
+function animateHugo() {
+    const model = document.querySelector("model-viewer");
+    if (!model) return;
 
-if st.button("Clasificar"):
-    if texto.strip():
-        doc = nlp(texto)
-        st.subheader("Resultado:")
-        st.json(doc.cats)
-    else:
-        st.warning("Escribe algo primero.")
+    model.setAttribute("rotation-per-second", "80deg");
+    model.cameraOrbit = "0deg 75deg 1.8m";
+
+    setTimeout(() => {
+        model.setAttribute("rotation-per-second", "30deg");
+        model.cameraOrbit = "0deg 75deg 2.5m";
+    }, 2000);
+}
+
+function hugoHabla(texto) {
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.lang = "es-ES";
+    msg.pitch = 1.1;
+    msg.rate = 1;
+    speechSynthesis.speak(msg);
+}
+</script>
+"""
+
+st.components.v1.html(reactive_animation_and_voice, height=0)
+
+# -----------------------------
+# CHAT CON HUGO (FUNCIONANDO)
+# -----------------------------
+with st.container(border=True):
+    st.subheader("💬 Habla con Hugo")
+
+    mensaje = st.text_input("Escribe algo para hablar con Hugo:")
+
+    if st.button("Enviar mensaje"):
+        if mensaje.strip():
+            respuesta = responder_como_asistente(mensaje)
+
+            st.write("### Hugo dice:")
+            st.write(respuesta)
+
+            st.components.v1.html(f"<script>hugoHabla('{respuesta}')</script>", height=0)
+            st.components.v1.html("<script>animateHugo()</script>", height=0)
+
+# -----------------------------
+# CLASIFICADOR SPACY (COMENTADO)
+# -----------------------------
+with st.container(border=True):
+    st.subheader("🔍 Clasificador de preguntas (spaCy)")
+    st.caption("Este clasificador ya no es necesario para generar XML, pero lo mantenemos por si lo quieres usar.")
+
+    # ⭐ El clasificador sigue funcionando, pero ya no interfiere con el chat
+    texto = st.text_area("Escribe una pregunta o una opción:")
+
+    if st.button("Clasificar texto"):
+        if texto.strip():
+            doc = nlp(texto)
+
+            st.components.v1.html("<script>animateHugo()</script>", height=0)
+
+            categoria = max(doc.cats, key=doc.cats.get)
+            frase = f"La categoría detectada es {categoria}"
+
+            st.components.v1.html(f"<script>hugoHabla('{frase}')</script>", height=0)
+
+            st.markdown("""
+            <div style="padding:15px; background:#e8f5e9; border-radius:10px; margin-top:15px;">
+                <h3 style="color:#1b5e20;">Resultado de la clasificación</h3>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.json(doc.cats)
+        else:
+            st.warning("Escribe algo primero.")
+
+# -----------------------------
+# SUBIDA DE WORD + GENERAR XML
+# -----------------------------
+with st.container(border=True):
+    st.subheader("📄 Convertir Word a XML para Moodle")
+
+    archivo = st.file_uploader("Sube un archivo Word (.docx)", type=["docx"])
+
+    if archivo:
+        preguntas = extraer_preguntas(archivo)
+        xml = generar_xml(preguntas)
+
+        st.success("Preguntas extraídas correctamente")
+
+        st.download_button(
+            "Descargar XML para Moodle",
+            xml,
+            file_name="preguntas.xml"
+        )
+
+# -----------------------------
+# Sidebar
+# -----------------------------
+with st.sidebar:
+    st.title("ℹ️ Información")
+    st.markdown("""
+    - Modelo: spaCy  
+    - Funciones: Chat, Clasificador, Generador XML  
+    - Avatar: Modelo 3D GLB  
+    - Autora: Laura  
+    """)
 
