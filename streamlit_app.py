@@ -25,7 +25,7 @@ def responder_como_asistente(texto):
     }
 
     data = {
-        "model": "mixtral-8x7b-32768",
+        "model": "llama-3.1-8b-instant",
         "messages": [
             {"role": "system", "content": "Eres Hugo, un asistente amable que ayuda a Laura a generar preguntas tipo test y XML para Moodle."},
             {"role": "user", "content": texto}
@@ -39,6 +39,7 @@ def responder_como_asistente(texto):
         return "Error en la API de Groq: " + str(respuesta_json)
 
     return respuesta_json["choices"][0]["message"]["content"]
+
 
 
 
