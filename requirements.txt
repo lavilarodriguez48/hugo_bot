@@ -1,5 +1,5 @@
 streamlit
 spacy
 python-docx
-openai
+requests
 
