@@ -78,22 +78,29 @@ h3 {
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# CABECERA PROFESIONAL
+# CABECERA PROFESIONAL DEFINITIVA
 # -----------------------------
 col1, col2, col3 = st.columns([1, 2, 2])
 
 with col1:
+    # Mostrar logo SVG como HTML
     with open("assets/hugo_logo.svg", "r") as f:
         svg = f.read()
-    st.markdown(svg, unsafe_allow_html=True)
+    st.markdown(f"<div style='padding-top:20px;'>{svg}</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("""
-        <h1 style='margin-bottom:0;'>🧑‍🦱 Hugo — Tu asistente 3D inteligente</h1>
-        <h3 style='margin-top:5px; color:#555;'>Habla con Hugo, sube Word o genera XML para Moodle</h3>
+        <div style='padding-top:40px;'>
+            <h1 style='margin-bottom:0; font-size:42px;'>🧑‍🦱 Hugo — Tu asistente 3D inteligente</h1>
+            <h3 style='margin-top:5px; color:#555;'>Habla con Hugo, sube Word o genera XML para Moodle</h3>
+        </div>
     """, unsafe_allow_html=True)
 
 with col3:
+    st.markdown("""
+        <div style='padding-top:10px;'>
+    """, unsafe_allow_html=True)
+
     st.components.v1.html("""
     <script type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
@@ -104,10 +111,12 @@ with col3:
         alt="Hugo"
         auto-rotate
         camera-controls
-        style="width: 100%; height: 250px;"
+        style="width: 100%; height: 260px;"
         orientation="0deg 90deg 0deg">
     </model-viewer>
-    """, height=250)
+    """, height=260)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------
 # Cargar modelo spaCy
