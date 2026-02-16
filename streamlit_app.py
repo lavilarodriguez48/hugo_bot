@@ -21,9 +21,12 @@ nlp = load_model()
 # -----------------------------
 # Función de chat con Hugo
 # -----------------------------
+from openai import OpenAI
+client = OpenAI()
+
 def responder_como_asistente(texto):
-    respuesta = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    respuesta = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "Eres Hugo, un asistente amable que ayuda a Laura a generar preguntas tipo test y XML para Moodle."},
             {"role": "user", "content": texto}
