@@ -1,6 +1,6 @@
 import streamlit as st
 import spacy
-from procesar_word import extraer_preguntas  
+from extraer_preguntas import extraer_preguntas  
 from generar_xml import generar_xml  
 import requests
 import json
