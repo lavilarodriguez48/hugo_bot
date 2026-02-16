@@ -1,13 +1,9 @@
 import streamlit as st
 import spacy
-import openai  
 from procesar_word import extraer_preguntas  
 from generar_xml import generar_xml  
-
-# -----------------------------
-# Configurar clave OpenAI
-# -----------------------------
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+import requests
+import json
 
 # -----------------------------
 # Cargar modelo spaCy
@@ -19,11 +15,8 @@ def load_model():
 nlp = load_model()
 
 # -----------------------------
-# Función de chat con Hugo
+# Función de chat con Hugo (GROQ)
 # -----------------------------
-import requests
-import json
-
 def responder_como_asistente(texto):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -43,9 +36,6 @@ def responder_como_asistente(texto):
     respuesta_json = response.json()
 
     return respuesta_json["choices"][0]["message"]["content"]
-
-
-
 
 # -----------------------------
 # Configuración de la página
@@ -118,7 +108,7 @@ function hugoHabla(texto) {
 st.components.v1.html(reactive_animation_and_voice, height=0)
 
 # -----------------------------
-# CHAT CON HUGO (FUNCIONANDO)
+# CHAT CON HUGO
 # -----------------------------
 with st.container(border=True):
     st.subheader("💬 Habla con Hugo")
@@ -136,13 +126,12 @@ with st.container(border=True):
             st.components.v1.html("<script>animateHugo()</script>", height=0)
 
 # -----------------------------
-# CLASIFICADOR SPACY (COMENTADO)
+# CLASIFICADOR SPACY
 # -----------------------------
 with st.container(border=True):
     st.subheader("🔍 Clasificador de preguntas (spaCy)")
     st.caption("Este clasificador ya no es necesario para generar XML, pero lo mantenemos por si lo quieres usar.")
 
-    # ⭐ El clasificador sigue funcionando, pero ya no interfiere con el chat
     texto = st.text_area("Escribe una pregunta o una opción:")
 
     if st.button("Clasificar texto"):
