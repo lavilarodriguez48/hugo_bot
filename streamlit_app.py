@@ -4,7 +4,10 @@ from extraer_preguntas import extraer_preguntas
 from generar_xml import generar_xml  
 import requests
 import json
-st.image("assets/hugo_logo.svg", width=200)
+with open("assets/hugo_logo.svg", "r") as f:
+    svg = f.read()
+st.markdown(svg, unsafe_allow_html=True)
+
 
 # -----------------------------
 # Cargar modelo spaCy (solo si lo necesitas)
