@@ -4,9 +4,10 @@ from procesar_word import extraer_preguntas
 from generar_xml import generar_xml  
 import requests
 import json
+st.image("assets/hugo_logo.svg", width=200)
 
 # -----------------------------
-# Cargar modelo spaCy
+# Cargar modelo spaCy (solo si lo necesitas)
 # -----------------------------
 @st.cache_resource
 def load_model():
@@ -39,9 +40,6 @@ def responder_como_asistente(texto):
         return "Error en la API de Groq: " + str(respuesta_json)
 
     return respuesta_json["choices"][0]["message"]["content"]
-
-
-
 
 
 # -----------------------------
@@ -133,54 +131,46 @@ with st.container(border=True):
             st.components.v1.html("<script>animateHugo()</script>", height=0)
 
 # -----------------------------
-# CLASIFICADOR SPACY
-# -----------------------------
-with st.container(border=True):
-    st.subheader("🔍 Clasificador de preguntas (spaCy)")
-    st.caption("Este clasificador ya no es necesario para generar XML, pero lo mantenemos por si lo quieres usar.")
-
-    texto = st.text_area("Escribe una pregunta o una opción:")
-
-    if st.button("Clasificar texto"):
-        if texto.strip():
-            doc = nlp(texto)
-
-            st.components.v1.html("<script>animateHugo()</script>", height=0)
-
-            categoria = max(doc.cats, key=doc.cats.get)
-            frase = f"La categoría detectada es {categoria}"
-
-            st.components.v1.html(f"<script>hugoHabla('{frase}')</script>", height=0)
-
-            st.markdown("""
-            <div style="padding:15px; background:#e8f5e9; border-radius:10px; margin-top:15px;">
-                <h3 style="color:#1b5e20;">Resultado de la clasificación</h3>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.json(doc.cats)
-        else:
-            st.warning("Escribe algo primero.")
-
-# -----------------------------
 # SUBIDA DE WORD + GENERAR XML
 # -----------------------------
+# -----------------------------
+# SUBIDA DE WORD + VALIDACIÓN + GENERAR XML
+# -----------------------------
+from validar_word import validar_word
+
 with st.container(border=True):
     st.subheader("📄 Convertir Word a XML para Moodle")
 
     archivo = st.file_uploader("Sube un archivo Word (.docx)", type=["docx"])
 
     if archivo:
+        # 1) Validar el documento
+        errores = validar_word(archivo)
+
+        if errores:
+            st.error("⚠️ Se han encontrado problemas en el documento:")
+            for e in errores:
+                st.write(f"- {e}")
+            st.stop()  # Detiene el flujo si hay errores
+
+        # 2) Si no hay errores, extraer preguntas
         preguntas = extraer_preguntas(archivo)
-        xml = generar_xml(preguntas)
 
-        st.success("Preguntas extraídas correctamente")
+        if not preguntas:
+            st.error("No se han podido extraer preguntas válidas del documento.")
+        else:
+            st.success(f"Se han detectado {len(preguntas)} preguntas correctamente.")
+            st.json(preguntas)
 
-        st.download_button(
-            "Descargar XML para Moodle",
-            xml,
-            file_name="preguntas.xml"
-        )
+            # 3) Generar XML
+            xml = generar_xml(preguntas)
+
+            st.download_button(
+                "Descargar XML para Moodle",
+                xml,
+                file_name="preguntas.xml"
+            )
+
 
 # -----------------------------
 # Sidebar
@@ -188,9 +178,14 @@ with st.container(border=True):
 with st.sidebar:
     st.title("ℹ️ Información")
     st.markdown("""
-    - Modelo: spaCy  
-    - Funciones: Chat, Clasificador, Generador XML  
-    - Avatar: Modelo 3D GLB  
+    - Procesador de Word → XML  
+    - Chat con Hugo  
+    - Avatar 3D  
     - Autora: Laura  
     """)
+
+
+
+
+
 
