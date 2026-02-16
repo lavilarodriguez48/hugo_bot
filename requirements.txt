@@ -1,2 +1,5 @@
 streamlit
 spacy
+python-docx
+openai
+
