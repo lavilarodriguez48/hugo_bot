@@ -2,12 +2,51 @@ import streamlit as st
 import spacy
 from extraer_preguntas import extraer_preguntas  
 from generar_xml import generar_xml  
+from validar_word import validar_word
 import requests
 import json
-with open("assets/hugo_logo.svg", "r") as f:
-    svg = f.read()
-st.markdown(svg, unsafe_allow_html=True)
 
+# -----------------------------
+# Configuración de la página
+# -----------------------------
+st.set_page_config(
+    page_title="Hugo — Asistente 3D",
+    page_icon="👨‍🦱",
+    layout="wide"
+)
+
+# -----------------------------
+# CABECERA PROFESIONAL
+# -----------------------------
+col1, col2, col3 = st.columns([1, 2, 2])
+
+with col1:
+    # Mostrar logo SVG como HTML
+    with open("assets/hugo_logo.svg", "r") as f:
+        svg = f.read()
+    st.markdown(svg, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+        <h1 style='margin-bottom:0;'>🧑‍🦱 Hugo — Tu asistente 3D inteligente</h1>
+        <h3 style='margin-top:5px; color:#555;'>Habla con Hugo, sube Word o genera XML para Moodle</h3>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.components.v1.html("""
+    <script type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+    </script>
+
+    <model-viewer
+        src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
+        alt="Hugo"
+        auto-rotate
+        camera-controls
+        style="width: 100%; height: 250px;"
+        orientation="0deg 90deg 0deg">
+    </model-viewer>
+    """, height=250)
 
 # -----------------------------
 # Cargar modelo spaCy (solo si lo necesitas)
@@ -44,46 +83,6 @@ def responder_como_asistente(texto):
 
     return respuesta_json["choices"][0]["message"]["content"]
 
-
-# -----------------------------
-# Configuración de la página
-# -----------------------------
-st.set_page_config(
-    page_title="Hugo — Asistente 3D",
-    page_icon="👨‍🦱",
-    layout="wide"
-)
-
-# -----------------------------
-# Encabezado bonito
-# -----------------------------
-st.markdown("""
-# 👨‍🦱 Hugo — Tu asistente 3D inteligente  
-### Habla con Hugo, sube Word o genera XML para Moodle  
-""")
-
-# -----------------------------
-# Avatar 3D
-# -----------------------------
-avatar_html = """
-<script type="module"
-        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-</script>
-
-<div style="width: 100%; height: 500px;">
-<model-viewer
-    src="https://raw.githubusercontent.com/lavilarodriguez48/hugo_bot/main/assets/hugo.glb"
-    alt="Hugo"
-    auto-rotate
-    camera-controls
-    style="width: 100%; height: 500px;"
-    orientation="0deg 90deg 0deg">
-</model-viewer>
-
-</div>
-"""
-
-st.components.v1.html(avatar_html, height=500)
 
 # -----------------------------
 # Script para animación + voz
@@ -134,13 +133,8 @@ with st.container(border=True):
             st.components.v1.html("<script>animateHugo()</script>", height=0)
 
 # -----------------------------
-# SUBIDA DE WORD + GENERAR XML
-# -----------------------------
-# -----------------------------
 # SUBIDA DE WORD + VALIDACIÓN + GENERAR XML
 # -----------------------------
-from validar_word import validar_word
-
 with st.container(border=True):
     st.subheader("📄 Convertir Word a XML para Moodle")
 
@@ -154,9 +148,9 @@ with st.container(border=True):
             st.error("⚠️ Se han encontrado problemas en el documento:")
             for e in errores:
                 st.write(f"- {e}")
-            st.stop()  # Detiene el flujo si hay errores
+            st.stop()
 
-        # 2) Si no hay errores, extraer preguntas
+        # 2) Extraer preguntas
         preguntas = extraer_preguntas(archivo)
 
         if not preguntas:
@@ -174,7 +168,6 @@ with st.container(border=True):
                 file_name="preguntas.xml"
             )
 
-
 # -----------------------------
 # Sidebar
 # -----------------------------
@@ -186,7 +179,6 @@ with st.sidebar:
     - Avatar 3D  
     - Autora: Laura  
     """)
-
 
 
 
