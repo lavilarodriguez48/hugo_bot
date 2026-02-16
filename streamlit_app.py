@@ -21,18 +21,29 @@ nlp = load_model()
 # -----------------------------
 # Función de chat con Hugo
 # -----------------------------
-from openai import OpenAI
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+import requests
+import json
 
 def responder_como_asistente(texto):
-    respuesta = client.chat.completions.create(
-        model="gpt-4o-mini-chat",
-        messages=[
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "model": "llama3-8b-8192",
+        "messages": [
             {"role": "system", "content": "Eres Hugo, un asistente amable que ayuda a Laura a generar preguntas tipo test y XML para Moodle."},
             {"role": "user", "content": texto}
         ]
-    )
-    return respuesta.choices[0].message["content"]
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    respuesta_json = response.json()
+
+    return respuesta_json["choices"][0]["message"]["content"]
+
 
 
 
