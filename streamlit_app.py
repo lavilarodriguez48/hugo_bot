@@ -35,14 +35,11 @@ def responder_como_asistente(texto):
     response = requests.post(url, headers=headers, data=json.dumps(data))
     respuesta_json = response.json()
 
-    # 👇 MOSTRAR EL JSON PARA VER EL ERROR REAL
-    st.write("DEBUG:", respuesta_json)
-
-    # 👇 SI NO HAY CHOICES, DEVOLVER EL ERROR
     if "choices" not in respuesta_json:
         return "Error en la API de Groq: " + str(respuesta_json)
 
     return respuesta_json["choices"][0]["message"]["content"]
+
 
 
 # -----------------------------
