@@ -22,7 +22,8 @@ nlp = load_model()
 # Función de chat con Hugo
 # -----------------------------
 from openai import OpenAI
-client = OpenAI()
+
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def responder_como_asistente(texto):
     respuesta = client.chat.completions.create(
@@ -33,6 +34,7 @@ def responder_como_asistente(texto):
         ]
     )
     return respuesta.choices[0].message["content"]
+
 
 # -----------------------------
 # Configuración de la página
