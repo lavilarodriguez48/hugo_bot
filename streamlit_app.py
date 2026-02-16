@@ -16,12 +16,73 @@ st.set_page_config(
 )
 
 # -----------------------------
+# ESTILOS PERSONALIZADOS
+# -----------------------------
+st.markdown("""
+<style>
+
+html, body, [class*="css"] {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Tarjetas */
+.block-container {
+    padding-top: 2rem;
+}
+
+.stContainer {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+/* Títulos */
+h1 {
+    font-weight: 800;
+}
+h3 {
+    font-weight: 500;
+}
+
+/* Botones */
+.stButton>button {
+    background-color: #3A7AFE;
+    color: white;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+}
+.stButton>button:hover {
+    background-color: #1E5BDA;
+}
+
+/* Inputs */
+.stTextInput>div>div>input {
+    border-radius: 10px;
+}
+
+/* File uploader */
+.stFileUploader {
+    border-radius: 10px;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #f5f7ff;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
 # CABECERA PROFESIONAL
 # -----------------------------
 col1, col2, col3 = st.columns([1, 2, 2])
 
 with col1:
-    # Mostrar logo SVG como HTML
     with open("assets/hugo_logo.svg", "r") as f:
         svg = f.read()
     st.markdown(svg, unsafe_allow_html=True)
@@ -49,7 +110,7 @@ with col3:
     """, height=250)
 
 # -----------------------------
-# Cargar modelo spaCy (solo si lo necesitas)
+# Cargar modelo spaCy
 # -----------------------------
 @st.cache_resource
 def load_model():
@@ -111,13 +172,12 @@ function hugoHabla(texto) {
 }
 </script>
 """
-
 st.components.v1.html(reactive_animation_and_voice, height=0)
 
 # -----------------------------
 # CHAT CON HUGO
 # -----------------------------
-with st.container(border=True):
+with st.container():
     st.subheader("💬 Habla con Hugo")
 
     mensaje = st.text_input("Escribe algo para hablar con Hugo:")
@@ -133,15 +193,14 @@ with st.container(border=True):
             st.components.v1.html("<script>animateHugo()</script>", height=0)
 
 # -----------------------------
-# SUBIDA DE WORD + VALIDACIÓN + GENERAR XML
+# SUBIDA DE WORD + VALIDACIÓN + XML
 # -----------------------------
-with st.container(border=True):
+with st.container():
     st.subheader("📄 Convertir Word a XML para Moodle")
 
     archivo = st.file_uploader("Sube un archivo Word (.docx)", type=["docx"])
 
     if archivo:
-        # 1) Validar el documento
         errores = validar_word(archivo)
 
         if errores:
@@ -150,7 +209,6 @@ with st.container(border=True):
                 st.write(f"- {e}")
             st.stop()
 
-        # 2) Extraer preguntas
         preguntas = extraer_preguntas(archivo)
 
         if not preguntas:
@@ -159,7 +217,6 @@ with st.container(border=True):
             st.success(f"Se han detectado {len(preguntas)} preguntas correctamente.")
             st.json(preguntas)
 
-            # 3) Generar XML
             xml = generar_xml(preguntas)
 
             st.download_button(
@@ -179,6 +236,7 @@ with st.sidebar:
     - Avatar 3D  
     - Autora: Laura  
     """)
+
 
 
 
